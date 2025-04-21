@@ -1,11 +1,12 @@
 # RTML_final_project
-
 # Multimodal Vision-Language Models: A Comparative Study of CLIP, BLIP, and ViLT
 
 ## Project Overview
 This repository contains the implementation of a comparative study of three prominent multimodal vision-language models: CLIP, BLIP, and ViLT, as proposed in the research paper by Aakash Kuragayala, Harisa Faiza Dudekula, and Lakshika Padmamali Mahipala Mudiyanselae. The study evaluates these models for zero-shot image classification on the COCO dataset, focusing on performance, robustness, interpretability, and fairness. The project also includes from-scratch implementations of these models to explore custom architectures.
 
 The implementation is provided in a Jupyter Notebook (`RTML_fina_project.ipynb`), which includes data preparation, model training, and evaluation pipelines. The study uses a subset of 1,000 images from the COCO 2017 dataset and evaluates models under various perturbations (noise, blur, occlusion) and fairness metrics across demographic subgroups.
+
+---
 
 ## Objectives
 The project aims to:
@@ -120,43 +121,62 @@ The notebook generates output files (CSV, PNGs) in the working directory.
 
 ---
 
+## Analysis of Visualizations
+
+### Attention Heatmaps (Interpretability)
+The heatmaps (Samples 1 to 5) show the attention weights of a model (likely CLIP, BLIP, or ViLT) on 224x224 images divided into patches (14x14 grid, 196 patches total). The color scale ranges from ~0.0040 (dark blue, low attention) to ~0.070 (yellow, high attention).
+
+**Observations**:
+1. **Sample 1**: High attention (yellow) in patches around `(0, 0)` and `(10, 10)`, suggesting the model focuses on distinct image regions (possibly objects or key features).
+2. **Samples 2 and 4**: More distributed attention with multiple patches having moderate attention (green, ~0.050–0.060), indicating the model might be focusing on broader areas or struggling to pinpoint a single region.
+3. **ViLT Patch Mismatch Issue**: The mismatch (81 patches vs. expected 196) likely affects these heatmaps, suggesting the heatmaps might be from CLIP or BLIP, or the ViLT issue was resolved for visualization.
+
+### Fairness Bar Plots
+The bar plots show Top-1 accuracy across COCO categories (subgroups) for CLIP, BLIP, ViLT, and their from-scratch variants.
+
+**CLIP Fairness**:
+- Accuracy varies significantly across categories, ranging from ~0.5 to 2.5.
+- Categories like "fire hydrant" and "tennis racket" have high accuracy (~2.5), while others like "carrot" and "teddy bear" are lower (~0.5).
+- Suggests CLIP may be biased toward certain object types, possibly due to imbalanced training data.
+
+**BLIP Fairness**:
+- Accuracy ranges from ~0.5 to 3.0, with "fire hydrant" peaking at ~3.0.
+- BLIP seems to perform better on some categories compared to CLIP, possibly due to its generative pretraining approach.
+
+**ViLT Fairness**:
+- Accuracy is more uniform, ranging from ~6.5 to 7.5 across all categories.
+- Suggests less bias across subgroups but lower overall performance compared to CLIP/BLIP.
+
+**From-Scratch Models**:
+- Show lower accuracy (0.2 to 1.2) compared to pre-trained counterparts, with more variability across categories.
+- ViLT's from-scratch variant does not degrade as much, possibly due to its simpler architecture.
+
+---
+
 ## Results
-- **Performance**: CLIP is expected to excel in zero-shot classification, BLIP in generative tasks, and ViLT in computational efficiency.
-- **Robustness**: Models show varying resilience to noise, blur, and occlusion, with detailed metrics in `robustness_interpretability_fairness_results.csv`.
-- **Interpretability**: Attention heatmaps reveal model focus areas, though ViLT has patch mismatch issues (81 vs. 196 patches).
-- **Fairness**: Subgroup performance varies, highlighting potential biases (dependent on `coco_metadata.csv`).
+
+1. **Performance Overview**:
+   - **CLIP**: Top-1 accuracy is 0.1955, with a negative avg_similarity (-0.034). Top-5 accuracy reaches 0.74.
+   - **BLIP**: Slightly better Top-1 accuracy (0.2125) and positive avg_similarity (0.161), with Top-5 accuracy at 0.7855.
+   - **ViLT and ViLTFromScratch**: Both show perfect scores (1.0), indicating a likely evaluation error.
+   - **From-Scratch Models**: Lower accuracy compared to pre-trained counterparts.
+
+2. **Robustness**:
+   - **CLIP and BLIP**: Accuracy drops with noise and blur but improves slightly under larger occlusion.
+   - **ViLT and From-Scratch Models**: Exhibit uniform performance, likely due to evaluation issues.
+
+3. **Interpretability**:
+   - **Attention Entropy**:
+     - CLIP: 3.872 (focused attention).
+     - BLIP: 5.277 (distributed attention).
+     - From-scratch models: Higher entropy (~5.2).
 
 ---
 
 ## Limitations
-1. **Dataset Size**: Only 1,000 COCO images are used, which may limit model generalization.
-2. **ViLT Patch Issue**: ViLT's patch count (81) mismatches the expected 196, affecting interpretability visualizations.
-3. **Missing Metadata**: `coco_metadata.csv` is required for fairness analysis but not provided.
-4. **Training Scope**: Only CLIP is trained; other models rely on pre-trained or untrained weights.
-5. **Resource Constraints**: Small batch sizes and GPU memory limitations may affect training efficiency.
-
----
-
-## Future Work
-- **Expand Dataset**: Use a larger COCO subset or include a custom dataset (30–50 images) as proposed.
-- **Fix ViLT**: Adjust ViLT's configuration to handle 196 patches consistently.
-- **Generate Metadata**: Create `coco_metadata.csv` with subgroup annotations for fairness analysis.
-- **Train All Models**: Train BLIP, ViLT, and from-scratch models to ensure fair comparisons.
-- **Additional Perturbations**: Test rotation, color jitter, or text prompt variations for robustness.
-- **Optimize Performance**: Use gradient checkpointing or mixed precision to support larger batch sizes.
-
----
-
-## References
-1. Radford, A., et al. (2021). Learning Transferable Visual Models From Natural Language Supervision. arXiv:2103.00020.
-2. Li, J., et al. (2022). BLIP: Bootstrapping Language-Image Pretraining. arXiv:2201.12086.
-3. Kim, W., et al. (2021). ViLT: Vision-and-Language Transformer Without Convolution or Region Supervision. arXiv:2102.03334.
-4. Additional references in the project proposal.
-
----
-
-## Acknowledgments
-This project was developed as part of the Department of Information and Communication Technology at the Asian Institute of Technology, Thailand. The authors thank the academic community and open-source contributors for providing tools like Hugging Face, PyTorch, and the COCO dataset.
+1. **Dataset Size**: Only 1,000 COCO images are used.
+2. **ViLT Patch Issue**: Needs fixed patch count.
+3. **Expand Dataset**: Include more images for better generalization.
 
 ---
 
