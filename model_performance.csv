@@ -1,0 +1,7 @@
+model,accuracy,avg_similarity
+CLIP,0.1955,-0.034135558
+BLIP,0.2125,0.16093582
+VILT,1.0,1.0
+CLIPFromScratch,0.125,-0.12239388
+BLIPFromScratch,0.1255,0.0021737155
+VILTFromScratch,1.0,1.0
